@@ -1027,7 +1027,8 @@
     {k:["성과","대표","핵심","자랑","임팩트","결과","숫자","정량"],
      a:"대표 성과를 숫자로 요약하면 이렇습니다 👇\n\n• <b>22.5만 명</b> 학생 일일 AI 개인화 운영 (학부모 리포트·학습 알림)\n• 통화 분석 시간 <b>30분 → 6~10초</b>, 코칭 준비시간 <b>83%</b> 단축\n• STT 화자분리 <b>정확도 90.6%</b>\n• Udemy 신사업 <b>연 거래액 80억</b> 견인, 조직 <b>2명 → 50명</b>"},
     {k:["ai 프로젝트","어떤 프로젝트","프로젝트 종류","무슨 프로젝트","무엇을 만들","개발한","구축한","만든","어떤 문제","무슨 문제","문제를 풀","풀었","문제 해결","해결한"],
-     a:"현업의 문제를 정의하고, 검증(PoC)을 거쳐 정착까지 이끈 대표 AI 혁신 과제입니다.\n\n1. 학습 개인화 (학부모 리포트 & 학습 유도 알림)\n2. AI 업무지원 포털 (AgentPortal)\n3. AI 통화 코칭 (온라인코칭세일즈)\n4. RP봇 — AI 상담 역할극 훈련\n5. 표준 커리큘럼 자동 생성\n6. 학교·유치원 종합정보 서비스\n\n궁금한 번호나 이름을 말씀해 주세요!"},
+     a:"현업의 문제를 정의하고, 검증(PoC)을 거쳐 정착까지 이끈 대표 AI 혁신 과제입니다.\n\n1. 학습 개인화 (학부모 리포트 & 학습 유도 알림)\n2. AI 업무지원 포털 (AgentPortal)\n3. AI 통화 코칭 (온라인코칭세일즈)\n4. RP봇 — AI 상담 역할극 훈련\n5. 표준 커리큘럼 자동 생성\n6. 학교·유치원 종합정보 서비스\n\n아래에서 궁금한 과제를 눌러보세요 👇",
+      c:["학습 개인화","AgentPortal","통화 코칭","RP봇","리터러시 교육"]},
     {k:["기술","스택","tech","stack","언어","도구","tool","framework","프레임워크"],
      a:"기술은 목적이 아니라, 실현 가능성을 '직접 판단하고 검증'하기 위한 수단입니다 — 필요한 만큼 직접 다룹니다 👇\n\n<b>AI</b> · 생성형 AI(LLM) · RAG · AI Agent · 멀티 모델 라우팅 · STT\n<b>데이터/개발</b> · Python · SQL · 데이터 파이프라인(Airflow)\n<b>클라우드</b> · AWS\n\n핵심은 스택 자체가 아니라, 기술 제약·데이터 요건까지 고려해 '될지 안 될지'를 판단하는 능력입니다."},
     {k:["개인화","리포트","학부모","알림","22.5","학습 개인화","1번"],
@@ -1051,18 +1052,18 @@
     {k:["연락","이메일","email","contact","면접","연락처","전화"],
      a:"언제든 편하게 연락 주세요 🙂\n\n📩 creative_gt@naver.com\n\nAI로 어떤 가치를 만들 수 있을지, 함께 이야기 나눌 수 있으면 좋겠습니다."},
     {k:["안녕","hi","hello","누구","소개","뭐하","반가"],
-     a:"안녕하세요! 저는 안건태님의 경력을 안내하는 AI 어시스턴트입니다. 🙂\n문제 해결 방식·대표 성과·컨설팅 접근·비즈니스 배경 등 궁금한 걸 물어보세요. 아래 추천 질문을 눌러도 됩니다."}
+     a:"안녕하세요! 저는 안건태님의 경력을 안내하는 AI 어시스턴트입니다. 🙂\n아래 버튼에서 궁금한 것을 눌러보세요. 문제 해결 방식·대표 성과·컨설팅 접근·비즈니스 배경을 안내해 드립니다."}
   ];
   var FALLBACK = "그 부분은 제가 가진 데이터로 정확히 답하기 어렵네요. 대신 이런 걸 물어보실 수 있어요:\n• 가장 큰 성과는?\n• 어떤 문제를 어떻게 풀었나요?\n• 일하는 방식(컨설팅 접근)은?\n• 비즈니스 배경이 궁금해요\n자세한 내용은 creative_gt@naver.com 으로 문의 주세요!";
   var CHIPS = ["왜 안건태인가요?","어떤 문제를 풀었나요?","일하는 방식은?","어떻게 연락하나요?"];
 
-  function answer(q){
+  function match(q){
     var s=(q||"").toLowerCase(), best=null, score=0;
     for(var i=0;i<KB.length;i++){
       var c=0; for(var j=0;j<KB[i].k.length;j++){ if(s.indexOf(KB[i].k[j])>-1) c++; }
       if(c>score){score=c;best=KB[i];}
     }
-    return score>0?best.a:FALLBACK;
+    return score>0?best:null;
   }
 
   var fab=document.getElementById('ai-fab'),
@@ -1083,9 +1084,9 @@
   fab.addEventListener('click',function(){panel.classList.contains('open')?close():open();});
   closeBtn.addEventListener('click',close);
 
-  function renderChips(){
+  function renderChips(list){
     chipBox.innerHTML='';
-    CHIPS.forEach(function(t){
+    (list||CHIPS).forEach(function(t){
       var b=document.createElement('button');b.type='button';b.className='ai-chip';b.textContent=t;
       b.addEventListener('click',function(){ask(t);});
       chipBox.appendChild(b);
@@ -1132,7 +1133,10 @@
     userSay(q);
     var t=typing();
     setTimeout(function(){
-      t.remove(); botSay(answer(q));
+      t.remove();
+      var e=match(q);
+      botSay(e?e.a:FALLBACK);
+      renderChips(e&&e.c?e.c:CHIPS);
     },560);
   }
 })();
